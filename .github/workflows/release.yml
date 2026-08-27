@@ -24,9 +24,36 @@ jobs:
           cache: npm
 
       - name: Install dependencies
+        shell: bash
         run: npm ci
 
+      - name: Build (Mac x64 + arm64)
+        if: runner.os == 'macOS'
+        shell: bash
+        run: |
+          npx electron-forge make --arch=x64 --platform=darwin
+          npx electron-forge make --arch=arm64 --platform=darwin
+
+      - name: Build (Windows x64)
+        if: runner.os == 'Windows'
+        shell: bash
+        run: npx electron-forge make --arch=x64 --platform=win32
+
+      # electron-forge publish always builds for the host's own architecture
+      # only (no --arch option exists for it), which can't produce both Mac
+      # builds from one call - upload the already-built artifacts directly
+      # instead, from both this job and the other matrix leg, into one release.
       - name: Publish to GitHub Releases
-        run: npx electron-forge publish
+        shell: bash
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          TAG="v$(node -p "require('./package.json').version")"
+          gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --title "$TAG" --generate-notes || true
+          mapfile -t ASSETS < <(find release/make -type f \( -iname '*.zip' -o -iname '*.exe' -o -iname '*.nupkg' -o -iname 'RELEASES' \))
+          if [ "${#ASSETS[@]}" -eq 0 ]; then
+            echo "No build artifacts found under release/make" >&2
+            exit 1
+          fi
+          gh release upload "$TAG" "${ASSETS[@]}" --repo "$GITHUB_REPOSITORY" --clobber
