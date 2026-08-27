@@ -6,7 +6,10 @@ const electronPath = require('electron');
 
 test('the app boots and its preload script loads without error', () => {
     const entryPoint = path.join(__dirname, '..', 'out', 'electron', 'smokeTestMain.js');
-    const result = spawnSync(electronPath, [entryPoint], {
+    // --no-sandbox disables the OS-level Chromium sandbox (which needs a root-owned
+    // setuid helper binary CI runners don't have configured); it does not affect the
+    // per-window `sandbox: true` webPreference this test is actually checking.
+    const result = spawnSync(electronPath, ['--no-sandbox', entryPoint], {
         encoding: 'utf8',
         timeout: 15000,
     });
