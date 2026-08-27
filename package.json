@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "test": "yarn run build && node --test",
+    "test": "tsc && node --test",
     "start": "electron ./out/electron/index.js",
-    "timer": "yarn run build && yarn run start"
+    "timer": "npm run build && npm run start"
   },
   "author": "",
   "license": "MIT",
