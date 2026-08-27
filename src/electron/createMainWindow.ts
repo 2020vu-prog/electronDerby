@@ -1,4 +1,4 @@
-const { BrowserWindow, app } = require('electron');
+const { BrowserWindow } = require('electron');
 const path = require('path');
 import { startUdpTimerListener } from './udpTimerListener';
 
@@ -16,7 +16,10 @@ export function createMainWindow(options: CreateMainWindowOptions): any {
         height: 600,
         show,
         webPreferences: {
-            preload: path.join(app.getAppPath(), 'preload.js'),
+            // __dirname (not app.getAppPath()) - stays correct relative to this
+            // compiled file whether running from out/electron/ in dev or from
+            // inside a packaged app.asar, where getAppPath() is the asar root.
+            preload: path.join(__dirname, 'preload.js'),
             sandbox: true,
             contextIsolation: true,
             nodeIntegration: false,

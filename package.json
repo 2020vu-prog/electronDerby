@@ -2,16 +2,22 @@
   "name": "svelte-derby-electron",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "out/electron/index.js",
   "scripts": {
     "build": "tsc",
     "test": "tsc && node --test",
     "start": "electron ./out/electron/index.js",
-    "timer": "npm run build && npm run start"
+    "timer": "npm run build && npm run start",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
   },
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "@electron-forge/cli": "^7.11.2",
+    "@electron-forge/maker-squirrel": "^7.11.2",
+    "@electron-forge/maker-zip": "^7.11.2",
+    "@electron-forge/publisher-github": "^7.11.2",
     "@types/node": "^26.4.0",
     "electron": "^44.0.0",
     "typescript": "^7.0.2"
