@@ -1,19 +1,12 @@
-import { startUdpTimerListener } from './udpTimerListener';
+const { ipcRenderer } = require('electron');
 
-function udpInit() {
-    startUdpTimerListener({
-        onReading: (reading) => {
-            const udpTimerSpan = document.getElementById('udpTimerSpan');
-            if (!udpTimerSpan) {
-                console.log('cannot find transport element!');
-                return;
-            }
-            console.log(`server sending ${JSON.stringify(reading)} via ${udpTimerSpan}`);
-            const event = new CustomEvent('udpTimer', { detail: JSON.stringify(reading) });
-            udpTimerSpan.dispatchEvent(event);
-
-            //eWindow.webContents.send('targetPriceVal', msg)
-        },
-    });
-}
-udpInit();
+ipcRenderer.on('udpTimer', (_event: any, reading: { lane: string; ms: string }) => {
+    const udpTimerSpan = document.getElementById('udpTimerSpan');
+    if (!udpTimerSpan) {
+        console.log('cannot find transport element!');
+        return;
+    }
+    console.log(`server sending ${JSON.stringify(reading)} via ${udpTimerSpan}`);
+    const event = new CustomEvent('udpTimer', { detail: JSON.stringify(reading) });
+    udpTimerSpan.dispatchEvent(event);
+});

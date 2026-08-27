@@ -1,7 +1,7 @@
-const { app, BrowserWindow } = require('electron'); 
+const { app, BrowserWindow } = require('electron');
 const ipc = require('electron').ipcMain
 const path = require('path');
-
+import { startUdpTimerListener } from './udpTimerListener';
 
 let eWindow:any=null;
 
@@ -16,6 +16,14 @@ app.on('ready', () => {
 
   // hide the default menu bar that comes with the browser window
   eWindow.setMenuBarVisibility(false);
+
+  // Runs in the main process, which has unrestricted Node access regardless
+  // of renderer/preload sandboxing; relayed to the page over IPC.
+  startUdpTimerListener({
+    onReading: (reading) => {
+      eWindow.webContents.send('udpTimer', reading);
+    },
+  });
 
   // load a website to display
   //eWindow.loadURL(`https://www.google.com`);
