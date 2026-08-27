@@ -37,6 +37,7 @@ module.exports = {
       config: {
         repository: { owner: '2020vu-prog', name: 'electronDerby' },
         prerelease: false,
+        draft: false,
       },
     },
   ],
@@ -44,7 +45,10 @@ module.exports = {
     // package/make operate on whatever is already on disk under out/electron/ -
     // make sure it's fresh before either one runs.
     prePackage: async () => {
-      execFileSync('npx', ['tsc'], { stdio: 'inherit' });
+      // shell: true - on Windows, npx/npm are .cmd files; execFileSync can't
+      // resolve them without going through a shell (confirmed by a real CI
+      // failure: "spawnSync npx ENOENT" on windows-latest).
+      execFileSync('npx', ['tsc'], { stdio: 'inherit', shell: true });
     },
   },
 };
