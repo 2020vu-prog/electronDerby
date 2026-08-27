@@ -15,7 +15,7 @@ app.on('ready', () => {
 });
 
   // hide the default menu bar that comes with the browser window
-  eWindow.setMenuBarVisibility(null);
+  eWindow.setMenuBarVisibility(false);
 
   // load a website to display
   //eWindow.loadURL(`https://www.google.com`);

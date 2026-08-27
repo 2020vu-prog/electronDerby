@@ -1,7 +1,7 @@
 # Evolving instructions for running electron derbyp app
 # Initialization:
 ```
-git clone  https://bitbucket.org/cjwitte/electronderby
+git clone git@github.com:2020vu-prog/electronDerby.git
 ```
 
 * Eventually this is intended to be distributed as a windows msi or a mac dmg
@@ -12,7 +12,12 @@ yarn install
 yarn run timer
 ```
 
-* to test, run this command:
+* to run the automated tests (message parsing + a real UDP round-trip):
+```
+yarn test
+```
+
+* to manually smoke-test the running app against a live UDP sender:
 ```
 node udpSend2.js
 ```
