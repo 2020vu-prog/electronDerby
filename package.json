@@ -1,7 +1,7 @@
 {
   "name": "svelte-derby-electron",
   "version": "1.0.0",
-  "description": "",
+  "description": "Electron desktop shell for the svelteDerby race timer, with UDP timer ingestion.",
   "main": "out/electron/index.js",
   "scripts": {
     "build": "tsc",
@@ -11,7 +11,7 @@
     "package": "electron-forge package",
     "make": "electron-forge make"
   },
-  "author": "",
+  "author": "Chris Witte <cwitte@xmlhq.com>",
   "license": "MIT",
   "devDependencies": {
     "@electron-forge/cli": "^7.11.2",
