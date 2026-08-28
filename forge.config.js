@@ -1,4 +1,6 @@
 const { execFileSync } = require('node:child_process');
+const fs = require('node:fs');
+const path = require('node:path');
 
 module.exports = {
   // Forge's default outDir ("out") collides with tsc's own build output
@@ -54,6 +56,36 @@ module.exports = {
       // `build` script (not just tsc) so the packaged app also gets a
       // freshly-generated git breadcrumb, from one shared build definition.
       execFileSync('npm', ['run', 'build'], { stdio: 'inherit', shell: true });
+    },
+    // Without this, the Mac binary is completely unsigned ("code object is
+    // not signed at all"). Combined with the com.apple.quarantine flag a
+    // browser download adds, that's not just a Gatekeeper warning - macOS
+    // refuses to execute the binary's code at all (confirmed on a real
+    // downloaded release: process exists, 0% CPU, no output, no child
+    // processes, reported as "not responding"). No Apple Developer
+    // account/certificate is configured, so this needs to be an ad-hoc
+    // signature - but packagerConfig.osxSign can't do that: it always goes
+    // through @electron/osx-sign, which only ever *searches the keychain*
+    // for a real Developer ID certificate (identity: null/true just means
+    // "auto-discover", not "skip search and go ad-hoc"), finds nothing here
+    // or in CI, and silently no-ops rather than sign (its signing failures
+    // default to a swallowed warning, continueOnError: true, not a build
+    // failure - why this went unnoticed originally). True ad-hoc signing
+    // (`codesign --sign -`) needs to bypass that module and call codesign
+    // directly, which is what this hook does.
+    postPackage: async (_forgeConfig, packageResult) => {
+      if (packageResult.platform !== 'darwin') {
+        return;
+      }
+      for (const outputPath of packageResult.outputPaths) {
+        const appBundle = fs.readdirSync(outputPath).find((f) => f.endsWith('.app'));
+        if (!appBundle) {
+          continue;
+        }
+        const appPath = path.join(outputPath, appBundle);
+        execFileSync('codesign', ['--sign', '-', '--deep', '--force', appPath], { stdio: 'inherit' });
+        console.log(`Ad-hoc signed ${appPath}`);
+      }
     },
   },
 };
