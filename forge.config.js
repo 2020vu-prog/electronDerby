@@ -29,7 +29,14 @@ module.exports = {
     // maker run in the same job, so a broken dmg build would take the
     // otherwise-fine mac zip down with it. Add it back once verified.
     { name: '@electron-forge/maker-zip', platforms: ['darwin', 'linux', 'win32'] },
-    { name: '@electron-forge/maker-squirrel', config: {} },
+    {
+      name: '@electron-forge/maker-squirrel',
+      // Unlike the zip maker, Squirrel's installer filename doesn't include
+      // an architecture by default ("svelte-derby-electron-1.0.0.Setup.exe") -
+      // make it explicit, since it's the one asset in a release with no
+      // arch/platform indicator at all otherwise.
+      config: { setupExe: 'svelte-derby-electron-win32-x64-Setup.exe' },
+    },
   ],
   // No publishers configured: electron-forge publish has no per-architecture
   // control and always defaults to the host's own arch, which structurally
