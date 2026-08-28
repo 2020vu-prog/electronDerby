@@ -15,10 +15,10 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Check out source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
@@ -51,7 +51,14 @@ jobs:
           set -euo pipefail
           TAG="v$(node -p "require('./package.json').version")"
           gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --title "$TAG" --generate-notes || true
-          mapfile -t ASSETS < <(find release/make -type f \( -iname '*.zip' -o -iname '*.exe' -o -iname '*.nupkg' -o -iname 'RELEASES' \))
+          # Not mapfile: macos-latest's default `bash` is the system's ancient
+          # 3.2 (mapfile needs 4+), confirmed by a real CI failure ("mapfile:
+          # command not found", exit 127) that silently dropped every Mac
+          # asset from a release while Windows's newer Git Bash succeeded.
+          ASSETS=()
+          while IFS= read -r -d '' f; do
+            ASSETS+=("$f")
+          done < <(find release/make -type f \( -iname '*.zip' -o -iname '*.exe' -o -iname '*.nupkg' -o -iname 'RELEASES' \) -print0)
           if [ "${#ASSETS[@]}" -eq 0 ]; then
             echo "No build artifacts found under release/make" >&2
             exit 1
