@@ -1,6 +1,6 @@
 {
   "name": "svelte-derby-electron",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Electron desktop shell for the svelteDerby race timer, with UDP timer ingestion.",
   "main": "out/electron/index.js",
   "scripts": {
