@@ -11,6 +11,7 @@ module.exports = {
     ignore: [
       /^\/src($|\/)/,
       /^\/test($|\/)/,
+      /^\/scripts($|\/)/,
       /^\/\.github($|\/)/,
       /^\/release($|\/)/,
       /^\/node_modules($|\/)/,
@@ -49,8 +50,10 @@ module.exports = {
     prePackage: async () => {
       // shell: true - on Windows, npx/npm are .cmd files; execFileSync can't
       // resolve them without going through a shell (confirmed by a real CI
-      // failure: "spawnSync npx ENOENT" on windows-latest).
-      execFileSync('npx', ['tsc'], { stdio: 'inherit', shell: true });
+      // failure: "spawnSync npx ENOENT" on windows-latest). Runs the full
+      // `build` script (not just tsc) so the packaged app also gets a
+      // freshly-generated git breadcrumb, from one shared build definition.
+      execFileSync('npm', ['run', 'build'], { stdio: 'inherit', shell: true });
     },
   },
 };

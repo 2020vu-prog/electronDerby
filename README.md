@@ -11,6 +11,8 @@ Pre-built downloads (Mac `.zip`, Windows `.exe`) are published to [GitHub Releas
 * **Mac**: download the `-x64-` zip for an Intel Mac or the `-arm64-` zip for Apple Silicon, unzip, drag the `.app` to Applications, then right-click it and choose Open the first time (bypasses Gatekeeper's "unidentified developer" warning).
 * **Windows**: SmartScreen will warn on first run too - click "More info" -> "Run anyway".
 
+To check exactly which commit built the running app, use the menu: **Info -> Show Git Breadcrumb** (branch, short commit hash, dirty/clean, build date - same format as svelteDerby's own git breadcrumb).
+
 If the app doesn't seem to be working (e.g. no window appears), check the log file - it records startup, window, and load events even when nothing is visibly wrong:
 * **Mac**: `~/Library/Logs/svelte-derby-electron/main.log`
 * **Windows**: `%USERPROFILE%\AppData\Roaming\svelte-derby-electron\logs\main.log`

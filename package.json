@@ -4,8 +4,8 @@
   "description": "Electron desktop shell for the svelteDerby race timer, with UDP timer ingestion.",
   "main": "out/electron/index.js",
   "scripts": {
-    "build": "tsc",
-    "test": "tsc && node --test",
+    "build": "tsc && node scripts/generateGitBreadcrumb.js",
+    "test": "npm run build && node --test",
     "start": "electron ./out/electron/index.js",
     "timer": "npm run build && npm run start",
     "package": "electron-forge package",
