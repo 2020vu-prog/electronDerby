@@ -31,16 +31,11 @@ module.exports = {
     { name: '@electron-forge/maker-zip', platforms: ['darwin', 'linux', 'win32'] },
     { name: '@electron-forge/maker-squirrel', config: {} },
   ],
-  publishers: [
-    {
-      name: '@electron-forge/publisher-github',
-      config: {
-        repository: { owner: '2020vu-prog', name: 'electronDerby' },
-        prerelease: false,
-        draft: false,
-      },
-    },
-  ],
+  // No publishers configured: electron-forge publish has no per-architecture
+  // control and always defaults to the host's own arch, which structurally
+  // can't produce both Mac builds from one call. The release workflow runs
+  // `electron-forge make` once per arch/platform instead and uploads the
+  // results directly via the gh CLI.
   hooks: {
     // package/make operate on whatever is already on disk under out/electron/ -
     // make sure it's fresh before either one runs.
