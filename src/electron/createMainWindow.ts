@@ -27,9 +27,6 @@ export function createMainWindow(options: CreateMainWindowOptions): any {
         },
     });
 
-    // hide the default menu bar that comes with the browser window
-    eWindow.setMenuBarVisibility(false);
-
     log('createMainWindow: created, loading', url);
     eWindow.once('ready-to-show', () => log('ready-to-show'));
     eWindow.on('show', () =>

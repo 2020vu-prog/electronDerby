@@ -1,15 +1,41 @@
-const { app } = require('electron');
+const { app, Menu, dialog } = require('electron');
 import { createMainWindow } from './createMainWindow';
 import { log } from './log';
+import { readGitBreadcrumb, formatGitBreadcrumb } from './gitBreadcrumb';
 
 process.on('uncaughtException', (err) => log('uncaughtException', err && err.stack ? err.stack : err));
 process.on('unhandledRejection', (reason) => log('unhandledRejection', reason));
 
 log('app starting, version', app.getVersion(), 'electron', process.versions.electron, 'arch', process.arch);
 
+function buildMenu() {
+    const isMac = process.platform === 'darwin';
+    const template: any[] = [
+        ...(isMac ? [{ role: 'appMenu' }] : []),
+        {
+            label: 'Info',
+            submenu: [
+                {
+                    label: 'Show Git Breadcrumb',
+                    click: () => {
+                        dialog.showMessageBox({
+                            type: 'info',
+                            title: 'Git Breadcrumb',
+                            message: formatGitBreadcrumb(readGitBreadcrumb()),
+                        });
+                    },
+                },
+            ],
+        },
+    ];
+    Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+}
+
 app.on('ready', () => {
   log('app ready');
   // once electron has started up, create a window.
+
+  buildMenu();
 
   // load a website to display
   //createMainWindow({ url: 'https://www.google.com' });
