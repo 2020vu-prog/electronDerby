@@ -11,6 +11,7 @@ export function sendRacePhaseEnteredUdp(payloadJson: string): void {
         log('sendRacePhaseEnteredUdp: no UDP destination configured, skipping', payloadJson);
         return;
     }
+    log(`sendRacePhaseEnteredUdp: sent to ${destination.host}:${destination.port}`, payloadJson);
     sendUdpMessage(payloadJson, destination).catch((err) => {
         log('sendRacePhaseEnteredUdp: send failed', err && err.stack ? err.stack : err);
     });
