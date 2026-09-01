@@ -1,20 +1,9 @@
-import * as dgram from 'dgram';
+const { ipcMain } = require('electron');
 import { log } from './log';
 import { getUdpDestination } from './udpDestinationConfig';
+import { sendUdpMessage } from './udpMessageSender';
 
-export function sendUdpMessage(message: string, destination: { host: string; port: number }): Promise<void> {
-    return new Promise((resolve, reject) => {
-        const client = dgram.createSocket('udp4');
-        client.send(Buffer.from(message, 'utf8'), destination.port, destination.host, (err: Error | null) => {
-            client.close();
-            if (err) {
-                reject(err);
-            } else {
-                resolve();
-            }
-        });
-    });
-}
+let ipcRegistered = false;
 
 export function sendRacePhaseEnteredUdp(payloadJson: string): void {
     const destination = getUdpDestination();
@@ -24,5 +13,21 @@ export function sendRacePhaseEnteredUdp(payloadJson: string): void {
     }
     sendUdpMessage(payloadJson, destination).catch((err) => {
         log('sendRacePhaseEnteredUdp: send failed', err && err.stack ? err.stack : err);
+    });
+}
+
+// ipcMain is a process-global singleton, so this must run once per app
+// lifetime, not once per window - createMainWindow() can run more than once
+// (e.g. a macOS 'activate' recreating the window), and registering there
+// would stack up duplicate listeners, each firing on every future event.
+export function registerRacePhaseEnteredIpc(): void {
+    if (ipcRegistered) {
+        return;
+    }
+    ipcRegistered = true;
+
+    ipcMain.on('racePhaseEntered', (_event: any, payloadJson: string) => {
+        log('racePhaseEntered received', payloadJson);
+        sendRacePhaseEnteredUdp(payloadJson);
     });
 }

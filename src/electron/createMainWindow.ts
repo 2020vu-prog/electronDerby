@@ -1,7 +1,6 @@
-const { BrowserWindow, ipcMain } = require('electron');
+const { BrowserWindow } = require('electron');
 const path = require('path');
 import { startUdpTimerListener } from './udpTimerListener';
-import { sendRacePhaseEnteredUdp } from './racePhaseUdpSender';
 import { log } from './log';
 
 export interface CreateMainWindowOptions {
@@ -55,13 +54,6 @@ export function createMainWindow(options: CreateMainWindowOptions): any {
             },
         });
     }
-
-    // Reverse direction: the page (via preload.ts) tells us a new racephase
-    // was loaded onto the blocks; forward it out as a UDP message.
-    ipcMain.on('racePhaseEntered', (_event: any, payloadJson: string) => {
-        log('racePhaseEntered received', payloadJson);
-        sendRacePhaseEnteredUdp(payloadJson);
-    });
 
     eWindow.loadURL(url);
 

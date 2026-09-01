@@ -3,6 +3,7 @@ import { createMainWindow } from './createMainWindow';
 import { log } from './log';
 import { readGitBreadcrumb, formatGitBreadcrumb } from './gitBreadcrumb';
 import { openUdpDestinationDialog, registerUdpDestinationIpc } from './udpDestinationDialog';
+import { registerRacePhaseEnteredIpc } from './racePhaseUdpSender';
 
 process.on('uncaughtException', (err) => log('uncaughtException', err && err.stack ? err.stack : err));
 process.on('unhandledRejection', (reason) => log('unhandledRejection', reason));
@@ -46,6 +47,7 @@ app.on('ready', () => {
   // once electron has started up, create a window.
 
   registerUdpDestinationIpc();
+  registerRacePhaseEnteredIpc();
 
   // load a website to display
   //createMainWindow({ url: 'https://www.google.com' });

@@ -1,7 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const dgram = require('node:dgram');
-const { sendUdpMessage } = require('../out/electron/racePhaseUdpSender');
+const { sendUdpMessage } = require('../out/electron/udpMessageSender');
 
 function listenOnce(server) {
     return new Promise((resolve) => {
