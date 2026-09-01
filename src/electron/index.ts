@@ -10,6 +10,12 @@ process.on('unhandledRejection', (reason) => log('unhandledRejection', reason));
 
 log('app starting, version', app.getVersion(), 'electron', process.versions.electron, 'arch', process.arch);
 
+const DEFAULT_URL = 'https://go.rr1.us';
+const targetUrl = process.env.DERBY_URL || DEFAULT_URL;
+if (process.env.DERBY_URL) {
+    log('DERBY_URL override:', targetUrl);
+}
+
 function buildMenu(eWindow: any) {
     const isMac = process.platform === 'darwin';
     const template: any[] = [
@@ -49,13 +55,9 @@ app.on('ready', () => {
   registerUdpDestinationIpc();
   registerRacePhaseEnteredIpc();
 
-  // load a website to display
-  //createMainWindow({ url: 'https://www.google.com' });
-  //createMainWindow({ url: `file://${__dirname}/../public/index.html` });
-
-  //createMainWindow({ url: 'https://cf.derby.rr1.us' });
-  const eWindow = createMainWindow({ url: 'https://go.rr1.us' });
-  //createMainWindow({ url: 'http://0.0.0.0:8080' });
+  // load a website to display; override with the DERBY_URL env var
+  // (e.g. DERBY_URL=http://0.0.0.0:8080 npm start)
+  const eWindow = createMainWindow({ url: targetUrl });
   //eWindow.webContents.openDevTools()
 
   buildMenu(eWindow);
