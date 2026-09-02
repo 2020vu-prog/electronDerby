@@ -13,15 +13,15 @@ ipcRenderer.on('udpTimer', (_event: any, reading: { lane: string; ms: string }) 
 });
 
 // Reverse direction: the page tells us a new racephase has been loaded onto
-// the blocks by dispatching a DOM event on this element; relay it to the
-// main process (which has the dgram access the sandboxed renderer lacks) so
-// it can be sent out as a UDP message.
-window.addEventListener('DOMContentLoaded', () => {
-    const racePhaseSpan = document.getElementById('udpRacePhaseSpan');
-    if (!racePhaseSpan) {
-        return;
-    }
-    racePhaseSpan.addEventListener('racePhaseEntered', (event: any) => {
-        ipcRenderer.send('racePhaseEntered', event.detail);
-    });
+// the blocks by dispatching a bubbling DOM event; relay it to the main
+// process (which has the dgram access the sandboxed renderer lacks) so it
+// can be sent out as a UDP message.
+//
+// Listens on `document` (always present, even before the page's own JS has
+// run) rather than a specific element by id -- the page is a Svelte SPA, so
+// any element it renders (including a hook element like udpTimerSpan above)
+// doesn't exist until well after DOMContentLoaded, and waiting for that
+// event to look it up once silently misses the mount.
+document.addEventListener('racePhaseEntered', (event: any) => {
+    ipcRenderer.send('racePhaseEntered', event.detail);
 });
