@@ -18,7 +18,7 @@ module.exports = {
       /^\/release($|\/)/,
       /^\/node_modules($|\/)/,
       /^\/udpSend.*\.js$/,
-      /^\/udpRecv\.js$/,
+      /^\/udpRecv.*\.js$/,
       /^\/tsconfig\.json$/,
       /^\/forge\.config\.js$/,
       /^\/yarn\.lock$/,
